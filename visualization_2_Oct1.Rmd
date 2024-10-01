@@ -97,9 +97,32 @@ weather_df |>
   viridis::scale_color_viridis(
     name="position",
     discrete = T
-  )
+  )+
+  theme(legend.position = 'bottom') #shift legend
 ```
 
+change overall theme
+```{r}
+weather_df |> 
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_point(aes(color = name), alpha = .5) + 
+  labs(
+    title = "Temperature plot",
+    x = "Minimum daily temperature (C)",
+    y = "Maxiumum daily temperature (C)",
+    color = "Location",
+    caption = "Data from the rnoaa package"
+  )+
+  #scale_color_hue(
+   # name="position",
+    #h = c(140,300))
+  viridis::scale_color_viridis(
+    name="position",
+    discrete = T
+  )+
+  theme_minimal()+
+  theme(legend.position = 'bottom')
+```
 
 
 
