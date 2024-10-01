@@ -1,0 +1,107 @@
+---
+title: "data visualization"
+subtitle: "part2"
+output: html_document
+---
+
+I'm an R Markdown document! 
+
+```{r}
+library(tidyverse)
+library(ggridges)
+```
+
+```{r}
+weather_df = 
+  rnoaa::meteo_pull_monitors(
+    c("USW00094728", "USW00022534", "USS0023B17S"),
+    var = c("PRCP", "TMIN", "TMAX"), 
+    date_min = "2021-01-01",
+    date_max = "2022-12-31") |>
+  mutate(
+    name = case_match(
+      id, 
+      "USW00094728" ~ "CentralPark_NY", 
+      "USW00022534" ~ "Molokai_HI",
+      "USS0023B17S" ~ "Waterhole_WA"),
+    tmin = tmin / 10,
+    tmax = tmax / 10) |>
+  select(name, id, everything())
+
+```
+
+```{r}
+ggplot(weather_df, aes(x = tmin, y = tmax, colour = name)) + 
+  geom_point(alpha = 0.5)
+#ggp_weather = 
+#  weather_df |>
+#  ggplot(aes(x = tmin, y = tmax)) 
+#
+#ggp_weather + geom_point()
+```
+
+## labels
+
+```{r}
+weather_df |> 
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_point(aes(color = name), alpha = .5) + 
+  labs(
+    title = "Temperature plot",
+    x = "Minimum daily temperature (C)",
+    y = "Maxiumum daily temperature (C)",
+    color = "Location",
+    caption = "Data from the rnoaa package"
+  )
+```
+
+## scales
+
+```{r}
+weather_df |> 
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_point(aes(color = name), alpha = .5) + 
+  labs(
+    title = "Temperature plot",
+    x = "Minimum daily temperature (C)",
+    y = "Maxiumum daily temperature (C)",
+    color = "Location",
+    caption = "Data from the rnoaa package"
+  )+
+  scale_x_continuous(
+    breaks = c(-15,0,15),
+    labels = c('-15 C','0','15 C')
+  )+
+  scale_y_continuous(
+    trans = "sqrt",
+    position = "right"
+  )
+```
+
+look at color scales
+
+```{r}
+weather_df |> 
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_point(aes(color = name), alpha = .5) + 
+  labs(
+    title = "Temperature plot",
+    x = "Minimum daily temperature (C)",
+    y = "Maxiumum daily temperature (C)",
+    color = "Location",
+    caption = "Data from the rnoaa package"
+  )+
+  #scale_color_hue(
+   # name="position",
+    #h = c(140,300))
+  viridis::scale_color_viridis(
+    name="position",
+    discrete = T
+  )
+```
+
+
+
+
+
+
