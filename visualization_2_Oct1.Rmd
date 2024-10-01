@@ -8,7 +8,7 @@ I'm an R Markdown document!
 
 ```{r}
 library(tidyverse)
-library(ggridges)
+library(patchwork)
 ```
 
 ```{r}
@@ -123,6 +123,81 @@ weather_df |>
   theme_minimal()+
   theme(legend.position = 'bottom')
 ```
+
+## setting options
+
+```{r}
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = '90%'
+)
+
+theme_set(theme_minimal()+theme(legend.position = 'bottom'))
+
+options(
+  ggplot2.continuous.color = 'viridis',
+  ggplot2.continuous.fill = 'viridis'
+)
+
+scale_color_discrete = scale_color_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+```
+
+## data argument in geom
+
+```{r}
+central_park_df = 
+  weather_df |> 
+  filter(name == "CentralPark_NY")
+
+Waterhole_df = 
+  weather_df |> 
+  filter(name == "Waterhole_WA")
+
+ggplot(data = Waterhole_df, aes(x = date, y = tmax, color = name)) + 
+  geom_point() + 
+  geom_line(data = central_park_df) 
+```
+
+## patchwork
+
+```{r}
+tmax_tmin_p = 
+  weather_df |> 
+  ggplot(aes(x = tmin, y = tmax, color = name)) + 
+  geom_point(alpha = .5) +
+  theme(legend.position = "none")
+
+prcp_dens_p = 
+  weather_df |> 
+  filter(prcp > 0) |> 
+  ggplot(aes(x = prcp, fill = name)) + 
+  geom_density(alpha = .5) + 
+  theme(legend.position = "none")
+
+tmax_date_p = 
+  weather_df |> 
+  ggplot(aes(x = date, y = tmax, color = name)) + 
+  geom_point(alpha = .5) +
+  geom_smooth(se = FALSE) + 
+  theme(legend.position = "bottom")
+
+(tmax_tmin_p + prcp_dens_p) / tmax_date_p
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
